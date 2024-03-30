@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отправить ссылку</title>
+</head>
+<body>
+    <h1>Отправить ссылку</h1>
+    <form id="linkForm">
+        <label for="link">Ссылка:</label>
+        <input type="text" id="link" name="link" required>
+        <button type="submit">Отправить</button>
+    </form>
+
+    <div id="responseMessage"></div>
+
+    <script>
+        document.getElementById("linkForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const link = formData.get("link");
+            sendData(link);
+        });
+
+        function sendData(link) {
+            fetch('/save-ip', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ link })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("responseMessage").textContent = data.message;
+                document.getElementById("linkForm").reset();
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                document.getElementById("responseMessage").textContent = 'Произошла ошибка при отправке данных.';
+            });
+        }
+    </script>
+</body>
+</html>
